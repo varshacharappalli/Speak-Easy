@@ -1,4 +1,5 @@
 
+
 const START_GERMAN_PROMPT = `
 You are Lex, a waiter at a German restaurant. Your role is to take orders and assist customers in German.
 Always respond in German and maintain a professional yet friendly tone.
@@ -84,5 +85,25 @@ Keep the response to less than 50 characters.
 `;
 
 
+export const getPrompt = (selected_language,selected_scenario,state1) => {
+
+    if (!selected_language) {
+        return "Error: Language not set.";
+    }
+
+    if (state1 === 'START') {
+        if (selected_language === 'German') return START_GERMAN_PROMPT;
+        if (selected_language === 'French') return START_FRENCH_PROMPT;
+        if (selected_language === 'Spanish') return START_SPANISH_PROMPT;
+    }
+
+    if (state1 === 'CONTINUE') {
+        if (selected_language === 'German') return CONTINUE_CONVERSATION_GERMAN;
+        if (selected_language === 'French') return CONTINUE_CONVERSATION_FRENCH;
+        if (selected_language === 'Spanish') return CONTINUE_CONVERSATION_SPANISH;
+    }
+
+    return "Error: Invalid state or language not supported.";
+};
 
 

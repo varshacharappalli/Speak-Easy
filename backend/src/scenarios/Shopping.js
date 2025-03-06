@@ -1,3 +1,4 @@
+
 const START_GERMAN_SHOPPING_PROMPT = `
 You are Klaus, a salesperson in a German clothing store. Your role is to assist customers in finding products and answering their questions in German.
 Always respond in German and maintain a professional yet friendly tone.
@@ -9,7 +10,7 @@ For example:
 
 Do not wait for a user message. Initiate the conversation as if the customer has just entered.
 
-Keep the response to less than 50 characters.
+Keep the response to less than 100 characters.
 `;
 
 const START_FRENCH_SHOPPING_PROMPT = `
@@ -23,7 +24,7 @@ For example:
 
 Do not wait for a user message. Initiate the conversation as if the customer has just entered.
 
-Keep the response to less than 50 characters.
+Keep the response to less than 100 characters.
 `;
 
 const START_SPANISH_SHOPPING_PROMPT = `
@@ -37,7 +38,7 @@ For example:
 
 Do not wait for a user message. Initiate the conversation as if the customer has just entered.
 
-Keep the response to less than 50 characters.
+Keep the response to less than 100 characters.
 `;
 
 const CONTINUE_CONVERSATION_GERMAN_SHOPPING = `
@@ -51,7 +52,7 @@ Continue the conversation based on the customer's needs. For example:
 
 Ensure the customer feels well-assisted and comfortable.
 
-Keep the response to less than 50 characters.
+Keep the response to less than 100 characters.
 `;
 
 const CONTINUE_CONVERSATION_FRENCH_SHOPPING = `
@@ -65,7 +66,7 @@ Continue the conversation based on the customer's needs. For example:
 
 Ensure the customer feels well-assisted and comfortable.
 
-Keep the response to less than 50 characters.
+Keep the response to less than 100 characters.
 `;
 
 const CONTINUE_CONVERSATION_SPANISH_SHOPPING = `
@@ -79,5 +80,33 @@ Continue the conversation based on the customer's needs. For example:
 
 Ensure the customer feels well-assisted and comfortable.
 
-Keep the response to less than 50 characters.
+Keep the response to less than 100 characters.
 `;
+
+
+
+
+export const getPromptShopping = (selected_language,selected_scenario,state1) => {
+    
+
+    if (!selected_language) {
+        return "Error: Language not set.";
+    }
+
+    if (state1 === 'START') {
+        if (selected_language === 'German') return START_GERMAN_SHOPPING_PROMPT;
+        if (selected_language === 'French') return START_FRENCH_SHOPPING_PROMPT;
+        if (selected_language === 'Spanish') return START_SPANISH_SHOPPING_PROMPT;
+    }
+
+    if (state1 === 'CONTINUE') {
+        if (selected_language === 'German') return CONTINUE_CONVERSATION_GERMAN_SHOPPING;
+        if (selected_language === 'French') return CONTINUE_CONVERSATION_FRENCH_SHOPPING;
+        if (selected_language === 'Spanish') return CONTINUE_CONVERSATION_SPANISH_SHOPPING;
+    }
+
+    return "Error: Invalid state or language not supported.";
+};
+
+
+

@@ -1,3 +1,4 @@
+
 const START_GERMAN_PROMPT = `
 You are Hans, a station assistant at a German train station. Your role is to assist passengers with tickets, schedules, and directions in German.
 Always respond in German and maintain a professional yet friendly tone.
@@ -81,4 +82,29 @@ Keep the conversation natural and helpful, ensuring the passenger gets the neces
 
 Keep the response to less than 50 characters.
 `;
+
+export const getPromptTrain = (selected_language,selected_scenario,state1) => {
+
+    if (!selected_language || !selected_scenario) {
+        return "Error: Language or scenario not set.";
+    }
+
+    if (state1 === 'START') {
+            if (selected_language === 'German') return START_GERMAN_PROMPT;
+            if (selected_language === 'French') return START_FRENCH_PROMPT;
+            if (selected_language === 'Spanish') return START_SPANISH_PROMPT;
+        
+    }
+
+    if (state1 === 'CONTINUE') {
+        
+            if (selected_language === 'German') return CONTINUE_CONVERSATION_GERMAN;
+            if (selected_language === 'French') return CONTINUE_CONVERSATION_FRENCH;
+            if (selected_language === 'Spanish') return CONTINUE_CONVERSATION_SPANISH;
+        
+    }
+
+    return "Error: Invalid state or scenario not supported.";
+};
+
 

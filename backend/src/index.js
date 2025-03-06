@@ -7,13 +7,10 @@ import session from 'express-session';
 
 
 const app=express();
+const messages = [];
 
-app.use(session({
-    secret: "yourSecretKey", 
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } 
-}));
+
+console.log("API key loaded:", process.env.API_KEY ? "Yes (length: " + process.env.API_KEY.length + ")" : "No");
 
 const PORT=process.env.PORT||5001;
 app.use(express.json());
