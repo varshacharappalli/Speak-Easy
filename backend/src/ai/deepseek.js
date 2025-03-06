@@ -36,9 +36,7 @@ export const fetchChatResponse = async (messages = [], prompt) => {
             return null;
         }
 
-        // In deepseek.js, modify the response handling:
 const data = await response.json();
-console.log("API raw response:", JSON.stringify(data)); // Add this line to see the full response
 
 if (data.choices && data.choices.length > 0) {
     const botResponse = data.choices[0].message.content;

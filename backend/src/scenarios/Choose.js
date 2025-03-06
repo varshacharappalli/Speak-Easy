@@ -1,4 +1,5 @@
 import { fetchChatResponse } from '../ai/deepseek.js';
+import { convertToAudioFile } from '../ai/gtts.js';
 import { getPrompt } from './restaurant.js';
 import { getPromptShopping } from './Shopping.js';
 import { getPromptTrain } from './TrainStation.js';
@@ -29,10 +30,17 @@ const checkAndInitializePrompt = async () => {
         if (state.prompt) {
             console.log("Fetching AI response...");
             const response = await fetchChatResponse([], state.prompt);
-            // Add proper handling for the response
             if (response) {
                 console.log("AI Response successfully received and processed.");
-                return response;
+                if(state.lang==='French'){
+                    convertToAudioFile('fr',response);
+                }
+                if(state.lang==='German'){
+                    convertToAudioFile('de',response);
+                }
+                if(state.lang==='English'){
+                    convertToAudioFile('es',response);
+                }
             } else {
                 console.error("Failed to get AI response.");
             }
