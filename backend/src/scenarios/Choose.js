@@ -22,14 +22,20 @@ export const setScenario = (scen) => {
 };
 
 const checkAndInitializePrompt = async () => {
-    if (state.lang && state.scen && state.prompt === null) { 
+    if (state.lang && state.scen && state.prompt === null) {
         console.log("Both language and scenario are set. Initializing prompt...");
         state.prompt = await initializePrompt();
         
         if (state.prompt) {
             console.log("Fetching AI response...");
             const response = await fetchChatResponse([], state.prompt);
-            console.log("AI Response:", response);
+            // Add proper handling for the response
+            if (response) {
+                console.log("AI Response successfully received and processed.");
+                return response;
+            } else {
+                console.error("Failed to get AI response.");
+            }
         }
     }
 };
@@ -63,9 +69,15 @@ const initializePrompt = async () => {
         }
 
         console.log("Generated Prompt:", prompt);
-        return prompt;  // 🔹 Don't call fetchChatResponse() here, let checkAndInitializePrompt handle it
+        return prompt;
     } catch (error) {
         console.error("Error initializing prompt:", error);
         return "Error: Unable to initialize prompt.";
     }
+};
+
+// Add a function to expose the current AI response
+export const getCurrentResponse = () => {
+    // This could be enhanced to store and return the last response
+    return state.lastResponse;
 };

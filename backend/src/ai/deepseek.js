@@ -2,11 +2,9 @@ import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 dotenv.config({ path: "./src/.env" });
 
-
-export const fetchChatResponse = async (messages = [],prompt) => {  
+export const fetchChatResponse = async (messages = [], prompt) => {
     try {
-        
-        if (!prompt || prompt.startsWith("Error")) {  
+        if (!prompt || prompt.startsWith("Error")) {
             console.log("Waiting for language and scenario to be set...");
             return null;
         }
@@ -14,7 +12,6 @@ export const fetchChatResponse = async (messages = [],prompt) => {
         const newMessages = [...messages, { role: 'user', content: prompt }];
 
         console.log("Sending request to AI service...");
-
         const apiKey = process.env.API_KEY?.trim();
         if (!apiKey) {
             console.error("Error: Missing API key.");
@@ -39,16 +36,23 @@ export const fetchChatResponse = async (messages = [],prompt) => {
             return null;
         }
 
-        const data = await response.json();
-        if (data.choices && data.choices.length > 0) {
-            const botResponse = data.choices[0].message.content;
-            console.log("AI Response:", botResponse);
-            return botResponse;
-        } else {
-            console.log("No response from AI.");
-            return null;
-        }
+        // In deepseek.js, modify the response handling:
+const data = await response.json();
+console.log("API raw response:", JSON.stringify(data)); // Add this line to see the full response
 
+if (data.choices && data.choices.length > 0) {
+    const botResponse = data.choices[0].message.content;
+    if (botResponse) {
+        console.log("AI Response received:", botResponse);
+        return botResponse;
+    } else {
+        console.error("Empty content in API response:", data);
+        return null;
+    }
+} else {
+    console.error("No choices found in API response:", data);
+    return null;
+}
     } catch (error) {
         console.error("Error fetching chat response:", error);
         return null;
