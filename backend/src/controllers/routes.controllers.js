@@ -11,9 +11,18 @@ export const scenario = (req, res) => {
     if (!scenario) {
         return res.status(404).json({ message: 'Scenario has not been specified.' });
     }
-    res.status(200).json({ message: 'Scenario received successfully.' });
+    const language = req.session.language;
+    if (!language) {
+        return res.status(400).json({ message: 'Language not set.' });
+    }
+
+    res.status(200).json({
+        message: `Scenario received successfully.`,
+        language: language,
+        scenario: scenario,
+    });
 };
 
-export const conversation=(req,res)=>{
+export const conversation = (req, res) => {
     
-}
+};
