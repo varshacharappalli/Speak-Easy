@@ -4,8 +4,8 @@ import { setLanguage } from "../middleware/setLanguage.js";
 
 const router = express.Router();
 
-router.post('/language', setLanguage, language);
+router.post('/language', language);
 router.post('/scenario', scenario);
-router.put('/ai-conversation', conversation);
+router.get('/conversation', conversation);
 
 export default router;
