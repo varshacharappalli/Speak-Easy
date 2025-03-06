@@ -3,8 +3,14 @@ import dotenv from 'dotenv';
 dotenv.config({ path: "./src/.env" });
 
 
-export const fetchChatResponse=async(messages)=>{
+export const fetchChatResponse=async(messages,prompt)=>{
     try {
+        if(!prompt){
+            console.log("No prompt was entered!");
+        }
+        else{
+            messages.push({ role: 'user', content: prompt })
+        }
         const response=await fetch("https://openrouter.ai/api/v1/chat/completions",{
             method:'POST',
             headers: {
