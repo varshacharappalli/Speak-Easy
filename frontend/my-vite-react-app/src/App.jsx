@@ -4,6 +4,8 @@ import viteLogo from '/vite.svg'
 import "./index.css";
 import Language from './pages/Language';
 import { Routes, Route, Link } from "react-router-dom";
+import Scenario from './pages/scenario';
+
 
 function App() {
 
@@ -11,6 +13,7 @@ function App() {
     <>
       <Routes>
         <Route path='/language' element={<Language/>}/>
+        <Route path="/scenario" element={<Scenario/>} />
       </Routes>
     </>
   )
