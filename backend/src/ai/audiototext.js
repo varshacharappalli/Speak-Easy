@@ -24,19 +24,23 @@ const uploadFile=async(filePath)=>{
     return response.data.upload_url;
 }
 
-const transcribeAudio=async(audioUrl)=>{
+const transcribeAudio = async (audioUrl) => {
     console.log("Started transcription");
     const response = await axios.post(
         "https://api.assemblyai.com/v2/transcript",
-        { audio_url: audioUrl },
+        { 
+            audio_url: audioUrl,
+            language_code: "de" 
+        },
         {
             headers: { authorization: API_KEY },
-            timeout:60000
+            timeout: 60000
         }
     );
     console.log("Transcription started:", response.data);
     return response.data.id;
-}
+};
+
 
 const getTranscript=async(transcriptId)=>{
     while(true){
