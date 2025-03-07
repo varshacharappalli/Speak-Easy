@@ -1,4 +1,3 @@
-
 const START_GERMAN_SHOPPING_PROMPT = `
 You are Klaus, a salesperson in a German clothing store. Your role is to assist customers in finding products and answering their questions in German.
 Always respond in German and maintain a professional yet friendly tone.
@@ -41,10 +40,14 @@ Do not wait for a user message. Initiate the conversation as if the customer has
 Keep the response to less than 100 characters.
 `;
 
-const CONTINUE_CONVERSATION_GERMAN_SHOPPING = `
+const getContinueConversationPrompt = (language, userInput) => {
+  const basePrompts = {
+    German: `
 You are Klaus, a salesperson in a German clothing store. Your role is to assist customers in German.
 Always respond in German and maintain a professional yet friendly tone.
 
+The customer says: "${userInput}"
+
 Continue the conversation based on the customer's needs. For example:
 - If the customer is looking for something specific, guide them to the right section.
 - If they have questions about sizes or prices, provide clear answers.
@@ -53,12 +56,13 @@ Continue the conversation based on the customer's needs. For example:
 Ensure the customer feels well-assisted and comfortable.
 
 Keep the response to less than 100 characters.
-`;
-
-const CONTINUE_CONVERSATION_FRENCH_SHOPPING = `
+`,
+    French: `
 You are Marc, a salesperson in a French boutique. Your role is to assist customers in French.
 Always respond in French and maintain a professional yet friendly tone.
 
+The customer says: "${userInput}"
+
 Continue the conversation based on the customer's needs. For example:
 - If the customer is looking for something specific, guide them to the right section.
 - If they have questions about sizes or prices, provide clear answers.
@@ -67,12 +71,13 @@ Continue the conversation based on the customer's needs. For example:
 Ensure the customer feels well-assisted and comfortable.
 
 Keep the response to less than 100 characters.
-`;
-
-const CONTINUE_CONVERSATION_SPANISH_SHOPPING = `
+`,
+    Spanish: `
 You are Diego, a salesperson in a Spanish clothing store. Your role is to assist customers in Spanish.
 Always respond in Spanish and maintain a professional yet friendly tone.
 
+The customer says: "${userInput}"
+
 Continue the conversation based on the customer's needs. For example:
 - If the customer is looking for something specific, guide them to the right section.
 - If they have questions about sizes or prices, provide clear answers.
@@ -81,14 +86,13 @@ Continue the conversation based on the customer's needs. For example:
 Ensure the customer feels well-assisted and comfortable.
 
 Keep the response to less than 100 characters.
-`;
+`
+  };
 
+  return basePrompts[language] || "Error: Language not supported.";
+};
 
-
-
-export const getPromptShopping = (selected_language,selected_scenario,state1) => {
-    
-
+export const getPromptShopping = (selected_language, selected_scenario, state1, userInput = "") => {
     if (!selected_language) {
         return "Error: Language not set.";
     }
@@ -100,13 +104,8 @@ export const getPromptShopping = (selected_language,selected_scenario,state1) =>
     }
 
     if (state1 === 'CONTINUE') {
-        if (selected_language === 'German') return CONTINUE_CONVERSATION_GERMAN_SHOPPING;
-        if (selected_language === 'French') return CONTINUE_CONVERSATION_FRENCH_SHOPPING;
-        if (selected_language === 'Spanish') return CONTINUE_CONVERSATION_SPANISH_SHOPPING;
+        return getContinueConversationPrompt(selected_language, userInput);
     }
 
     return "Error: Invalid state or language not supported.";
 };
-
-
-

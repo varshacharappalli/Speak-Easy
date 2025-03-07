@@ -1,13 +1,19 @@
-import { fetchChatResponse } from '../ai/deepseek.js';
-import { convertToAudioFile } from '../ai/gtts.js';
-import { getPrompt } from './restaurant.js';
-import { getPromptShopping } from './Shopping.js';
+import { fetchChatResponse } from '../ai/deepseek.js'; 
+import { convertToAudioFile } from '../ai/gtts.js'; 
+import { getPrompt } from './restaurant.js'; 
+import { getPromptShopping } from './Shopping.js'; 
 import { getPromptTrain } from './TrainStation.js';
 
 const state = {
     lang: "",
     scen: "",
-    prompt: null 
+    prompt: null,
+    lastResponse: "",
+    conversationStarted: false
+};
+
+const user_input = {
+    text: ""
 };
 
 export const setLanguage = (lang) => {
@@ -22,60 +28,104 @@ export const setScenario = (scen) => {
     checkAndInitializePrompt();
 };
 
+export const setText = async (text) => {
+    user_input.text = text;
+    console.log("Transcription text set to:", user_input.text);
+    
+    // Only continue conversation if it has been started
+    if (state.conversationStarted) {
+        await continueConversation();
+    }
+};
+
 const checkAndInitializePrompt = async () => {
-    if (state.lang && state.scen && state.prompt === null) {
-        console.log("Both language and scenario are set. Initializing prompt...");
-        state.prompt = await initializePrompt();
+    // Only proceed if both language and scenario are set
+    if (!state.lang || !state.scen) {
+        console.log("Waiting for both language and scenario to be set.");
+        return;
+    }
+    
+    // If conversation hasn't started yet, start it now
+    if (!state.conversationStarted) {
+        console.log("Starting new conversation...");
+        await startConversation();
+    }
+};
+
+const startConversation = async () => {
+    state.conversationStarted = true;
+    state.prompt = await initializePrompt("START");
+    
+    if (state.prompt) {
+        console.log("Fetching initial AI response...");
+        const response = await fetchChatResponse([], state.prompt);
         
-        if (state.prompt) {
-            console.log("Fetching AI response...");
-            const response = await fetchChatResponse([], state.prompt);
-            if (response) {
-                console.log("AI Response successfully received and processed.");
-                if(state.lang==='French'){
-                    convertToAudioFile('fr',response);
-                }
-                if(state.lang==='German'){
-                    convertToAudioFile('de',response);
-                }
-                if(state.lang==='English'){
-                    convertToAudioFile('es',response);
-                }
-            } else {
-                console.error("Failed to get AI response.");
+        if (response) {
+            console.log("Initial AI Response successfully received.");
+            state.lastResponse = response;
+            
+            // Convert response to audio
+            const langMap = { "French": "fr", "German": "de", "English": "en", "Spanish": "es" };
+            if (langMap[state.lang]) {
+                await convertToAudioFile(langMap[state.lang], response);
             }
+        } else {
+            console.error("Failed to get initial AI response.");
         }
     }
 };
 
-const initializePrompt = async () => {
+const continueConversation = async () => {
+    state.prompt = await initializePrompt("CONTINUE");
+    
+    if (state.prompt) {
+        console.log("Fetching AI response based on user input...");
+        const response = await fetchChatResponse([], state.prompt);
+        
+        if (response) {
+            console.log("AI Response successfully received.");
+            state.lastResponse = response;
+            
+            // Convert response to audio
+            const langMap = { "French": "fr", "German": "de", "English": "en", "Spanish": "es" };
+            if (langMap[state.lang]) {
+                await convertToAudioFile(langMap[state.lang], response);
+            }
+        } else {
+            console.error("Failed to get AI response.");
+        }
+    }
+};
+
+const initializePrompt = async (conversationState) => {
     try {
         if (!state.lang || !state.scen) {
             console.error("Error: Both language and scenario must be set before initializing.");
             return null;
         }
-
+        
         console.log("Language:", state.lang);
         console.log("Scenario:", state.scen);
-
-        const scenario = state.scen.toLowerCase();
+        console.log("Conversation State:", conversationState);
+        
         let prompt = "";
-
+        const scenario = state.scen.toLowerCase();
+        
         switch (scenario) {
             case "restaurant":
-                prompt = getPrompt(state.lang, state.scen, 'START');
+                prompt = getPrompt(state.lang, state.scen, conversationState, user_input.text);
                 break;
             case "shopping":
-                prompt = getPromptShopping(state.lang, state.scen, 'START');
+                prompt = getPromptShopping(state.lang, state.scen, conversationState, user_input.text);
                 break;
             case "trainstation":
-                prompt = getPromptTrain(state.lang, state.scen, 'START');
+                prompt = getPromptTrain(state.lang, state.scen, conversationState, user_input.text);
                 break;
             default:
                 console.error("Invalid scenario selected.");
                 return "Error: Invalid scenario selected.";
         }
-
+        
         console.log("Generated Prompt:", prompt);
         return prompt;
     } catch (error) {
@@ -84,8 +134,6 @@ const initializePrompt = async () => {
     }
 };
 
-// Add a function to expose the current AI response
 export const getCurrentResponse = () => {
-    // This could be enhanced to store and return the last response
     return state.lastResponse;
 };

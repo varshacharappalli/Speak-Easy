@@ -1,8 +1,7 @@
-import { setLanguage, setScenario } from "../scenarios/Choose.js";
-import fs from "fs";
-import path from "path";
+import { setLanguage, setScenario, setText } from "../scenarios/Choose.js"; 
+import fs from "fs"; 
+import path from "path"; 
 import { convertToText } from "../ai/audiototext.js";
-
 
 export const language = (req, res) => {
     const { lang } = req.body;
@@ -15,13 +14,13 @@ export const language = (req, res) => {
     res.status(200).json({ message: 'Language received successfully.' });
 };
 
-export const scenario = (req, res) => {
+export const scenario = async (req, res) => {
     const { scen } = req.body;
     if (!scen) {
         return res.status(400).json({ message: 'Scenario has not been specified.' });
     }
     
-    setScenario(scen);
+    await setScenario(scen);
     
     res.status(200).json({
         message: 'Scenario received successfully.',
@@ -29,20 +28,40 @@ export const scenario = (req, res) => {
     });
 };
 
-export const conversation = (req, res) => {
+export const conversation = async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ message: "No audio file uploaded." });
     }
-
-    const audioBuffer = req.file.buffer;
-    const fileName = `${Date.now()}_${req.file.originalname}`;
-    const filePath = path.join("uploads", fileName);
-
-    fs.writeFile(filePath, audioBuffer, (err) => {
-        if (err) {
-            return res.status(500).json({ message: "Error saving audio file." });
+    
+    try {
+        const audioBuffer = req.file.buffer;
+        const fileName = `${Date.now()}_${req.file.originalname}`;
+        const filePath = path.join("uploads", fileName);
+        
+        // Ensure the uploads directory exists
+        if (!fs.existsSync("uploads")) {
+            fs.mkdirSync("uploads", { recursive: true });
         }
-        res.status(200).json({ message: "Audio file saved successfully.", fileName });
-    });
-    convertToText(filePath);
+        
+        // Write file synchronously to ensure it's completed before processing
+        fs.writeFileSync(filePath, audioBuffer);
+        
+        // Process the audio file to get text
+        const text = await convertToText(filePath);
+        
+        // Send the text to the conversation manager
+        await setText(text);
+        
+        res.status(200).json({ 
+            message: "Audio file processed successfully.", 
+            fileName,
+            transcribedText: text
+        });
+    } catch (error) {
+        console.error("Error processing audio:", error);
+        res.status(500).json({ 
+            message: "Error processing audio file.", 
+            error: error.message 
+        });
+    }
 };

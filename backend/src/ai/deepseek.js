@@ -30,6 +30,8 @@ export const fetchChatResponse = async (messages = [], prompt) => {
             })
         });
 
+        
+
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             console.error("API request failed:", response.status, errorData);
@@ -37,6 +39,7 @@ export const fetchChatResponse = async (messages = [], prompt) => {
         }
 
 const data = await response.json();
+console.log(data);
 
 if (data.choices && data.choices.length > 0) {
     const botResponse = data.choices[0].message.content;

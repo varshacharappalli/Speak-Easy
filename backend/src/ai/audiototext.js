@@ -70,6 +70,7 @@ export const convertToText=async(filePath)=>{
         const text = await getTranscript(transcriptId);
 
         console.log("Final Transcription:", text);
+        return text;
     } catch (error) {
         console.error("Error:", error);
     }
