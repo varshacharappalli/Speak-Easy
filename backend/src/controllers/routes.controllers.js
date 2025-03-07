@@ -1,4 +1,7 @@
 import { setLanguage, setScenario } from "../scenarios/Choose.js";
+import fs from "fs";
+import path from "path";
+import { convertToText } from "../ai/audiototext.js";
 
 
 export const language = (req, res) => {
@@ -25,19 +28,21 @@ export const scenario = (req, res) => {
         scenario: scen
     });
 };
-/*export const conversation = (req, res) => {
-    if (!state.selected_language) {
-        return res.status(400).json({ message: "Language not set." });
+
+export const conversation = (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ message: "No audio file uploaded." });
     }
-    
-    if (!state.selected_scenario) {
-        return res.status(400).json({ message: "Scenario not set." });
-    }
-    
-    res.status(200).json({
-        message: "Conversation initiated successfully.",
-        language: state.selected_language,
-        scenario: state.selected_scenario,
+
+    const audioBuffer = req.file.buffer;
+    const fileName = `${Date.now()}_${req.file.originalname}`;
+    const filePath = path.join("uploads", fileName);
+
+    fs.writeFile(filePath, audioBuffer, (err) => {
+        if (err) {
+            return res.status(500).json({ message: "Error saving audio file." });
+        }
+        res.status(200).json({ message: "Audio file saved successfully.", fileName });
     });
-    
-};*/
+    convertToText(filePath);
+};

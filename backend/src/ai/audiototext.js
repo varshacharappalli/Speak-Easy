@@ -58,8 +58,7 @@ const getTranscript=async(transcriptId)=>{
     }
 }
 
-export const convertToText=async()=>{
-    const filePath = "output.mp3";
+export const convertToText=async(filePath)=>{
 
     try {
         const audioUrl = await uploadFile(filePath);

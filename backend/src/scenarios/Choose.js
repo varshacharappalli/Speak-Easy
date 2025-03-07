@@ -7,7 +7,7 @@ import { getPromptTrain } from './TrainStation.js';
 const state = {
     lang: "",
     scen: "",
-    prompt: null // Store the initialized prompt
+    prompt: null 
 };
 
 export const setLanguage = (lang) => {
