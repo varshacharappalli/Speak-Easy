@@ -76,21 +76,24 @@ export const userStore = create((set, get) => ({
     
     setUserInput: async (audioFile) => {
         try {
-            console.log("Uploading user audio file...");
-            
-            const formData = new FormData();
-            formData.append("audioFile", audioFile);
-            
-            const response = await axiosInstance.post('/auth/conversation', audioFile);
-            
-            console.log("User input uploaded successfully:", response.data);
-            
-            set({ userInput: audioFile });
-
-            return response.data;
+          console.log("Uploading user audio file...");
+          
+          const formData = new FormData();
+          formData.append("audioFile", audioFile);
+          
+          const response = await axiosInstance.post('/auth/conversation', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+          
+          console.log("User input uploaded successfully:", response.data);
+          
+          set({ userInput: audioFile });
+          return response.data;
         } catch (error) {
-            console.error("Error uploading user audio:", error.message);
-            throw error;
+          console.error("Error uploading user audio:", error.message);
+          throw error;
         }
-    }
+      }
 }));

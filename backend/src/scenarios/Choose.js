@@ -86,7 +86,7 @@ const continueConversation = async () => {
             
             const langMap = { "French": "fr", "German": "de", "English": "en", "Spanish": "es" };
             if (langMap[state.lang]) {
-                await convertToAudioFile(langMap[state.lang], response);
+                state.lastAudioFile = await convertToAudioFile(langMap[state.lang], response);
             }
         } else {
             console.error("Failed to get AI response.");
