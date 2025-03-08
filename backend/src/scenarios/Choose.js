@@ -1,3 +1,4 @@
+
 import { fetchChatResponse } from '../ai/deepseek.js'; 
 import { convertToAudioFile } from '../ai/gtts.js'; 
 import { getPrompt } from './restaurant.js'; 
@@ -9,6 +10,7 @@ const state = {
     scen: "",
     prompt: null,
     lastResponse: "",
+    lastAudioFile: null,
     conversationStarted: false
 };
 
@@ -32,20 +34,17 @@ export const setText = async (text) => {
     user_input.text = text;
     console.log("Transcription text set to:", user_input.text);
     
-    // Only continue conversation if it has been started
     if (state.conversationStarted) {
         await continueConversation();
     }
 };
 
 const checkAndInitializePrompt = async () => {
-    // Only proceed if both language and scenario are set
     if (!state.lang || !state.scen) {
         console.log("Waiting for both language and scenario to be set.");
         return;
     }
     
-    // If conversation hasn't started yet, start it now
     if (!state.conversationStarted) {
         console.log("Starting new conversation...");
         await startConversation();
@@ -64,10 +63,9 @@ const startConversation = async () => {
             console.log("Initial AI Response successfully received.");
             state.lastResponse = response;
             
-            // Convert response to audio
             const langMap = { "French": "fr", "German": "de", "English": "en", "Spanish": "es" };
             if (langMap[state.lang]) {
-                await convertToAudioFile(langMap[state.lang], response);
+                state.lastAudioFile=await convertToAudioFile(langMap[state.lang], response);
             }
         } else {
             console.error("Failed to get initial AI response.");
@@ -86,7 +84,6 @@ const continueConversation = async () => {
             console.log("AI Response successfully received.");
             state.lastResponse = response;
             
-            // Convert response to audio
             const langMap = { "French": "fr", "German": "de", "English": "en", "Spanish": "es" };
             if (langMap[state.lang]) {
                 await convertToAudioFile(langMap[state.lang], response);
@@ -137,3 +134,7 @@ const initializePrompt = async (conversationState) => {
 export const getCurrentResponse = () => {
     return state.lastResponse;
 };
+
+export const getAudioFile=()=>{
+    return state.lastAudioFile;
+}

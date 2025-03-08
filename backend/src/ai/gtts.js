@@ -24,6 +24,7 @@ export const convertToAudioFile = (lang, message) => {
                 console.log(`Audio file saved: ${filePath}`);
             }
         });
+        return filePath;
     } catch (error) {
         console.error('Error:', error.message);
     }

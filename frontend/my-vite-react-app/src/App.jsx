@@ -5,6 +5,7 @@ import "./index.css";
 import Language from './pages/Language';
 import { Routes, Route, Link } from "react-router-dom";
 import Scenario from './pages/scenario';
+import Conversation from './pages/Conversation';
 
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
       <Routes>
         <Route path='/language' element={<Language/>}/>
         <Route path="/scenario" element={<Scenario/>} />
+        <Route path="/conversation" element={<Conversation/>} />
       </Routes>
     </>
   )

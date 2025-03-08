@@ -1,4 +1,4 @@
-import { setLanguage, setScenario, setText } from "../scenarios/Choose.js"; 
+import { getAudioFile, setLanguage, setScenario, setText } from "../scenarios/Choose.js"; 
 import fs from "fs"; 
 import path from "path"; 
 import { convertToText } from "../ai/audiototext.js";
@@ -38,18 +38,14 @@ export const conversation = async (req, res) => {
         const fileName = `${Date.now()}_${req.file.originalname}`;
         const filePath = path.join("uploads", fileName);
         
-        // Ensure the uploads directory exists
         if (!fs.existsSync("uploads")) {
             fs.mkdirSync("uploads", { recursive: true });
         }
         
-        // Write file synchronously to ensure it's completed before processing
         fs.writeFileSync(filePath, audioBuffer);
         
-        // Process the audio file to get text
         const text = await convertToText(filePath);
         
-        // Send the text to the conversation manager
         await setText(text);
         
         res.status(200).json({ 
@@ -63,5 +59,51 @@ export const conversation = async (req, res) => {
             message: "Error processing audio file.", 
             error: error.message 
         });
+    }
+};
+
+export const airesponse = async (req, res) => {
+    try {
+        // Get the audio file path
+        const audioFile = getAudioFile();
+        
+        if (!audioFile) {
+            console.log("Audio file not found");
+            return res.status(404).json({ message: 'AI audio file not found' });
+        }
+        
+        console.log(`Sending AI audio file: ${audioFile}`);
+        
+        // Check if file exists
+        if (!fs.existsSync(audioFile)) {
+            console.error(`File does not exist at path: ${audioFile}`);
+            return res.status(404).json({ message: 'AI audio file does not exist on server' });
+        }
+        
+        // Set appropriate headers for audio content
+        res.setHeader('Content-Type', 'audio/mpeg');
+        
+        // For debugging, log the file size
+        const stats = fs.statSync(audioFile);
+        console.log(`Audio file size: ${stats.size} bytes`);
+        
+        // Send the file with absolute path
+        const absolutePath = path.resolve(audioFile);
+        console.log(`Sending absolute path: ${absolutePath}`);
+        
+        // Use fs.createReadStream for better handling of large files
+        const fileStream = fs.createReadStream(absolutePath);
+        fileStream.pipe(res);
+        
+        // Handle errors in the stream
+        fileStream.on('error', (err) => {
+            console.error("Error streaming file:", err);
+            if (!res.headersSent) {
+                res.status(500).json({ message: 'Error streaming audio file', error: err.message });
+            }
+        });
+    } catch (error) {
+        console.error("Error in AI response handler:", error);
+        res.status(500).json({ message: 'Error retrieving AI response', error: error.message });
     }
 };

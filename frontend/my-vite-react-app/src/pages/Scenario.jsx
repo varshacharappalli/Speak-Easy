@@ -4,8 +4,10 @@ import { userStore } from '../store/userStore';
 
 const Scenario = () => {
   const [selectedScenario, setSelectedScenario] = useState(null);
-  const {setSelectedScen}=userStore();
+  const { setSelectedScen } = userStore();
   const selectedLanguage = localStorage.getItem('selectedLanguage') || '';
+  const navigate = useNavigate();
+  
   const scenarios = [
     {
       id: 'Shopping',
@@ -31,6 +33,11 @@ const Scenario = () => {
     setSelectedScen(scenarioId);
     setSelectedScenario(scenarioId);
     localStorage.setItem('selectedScenario', scenarioId);
+  };
+  
+  const handleStartPracticing = () => {
+    // Navigate to the conversation page
+    navigate('/conversation');
   };
   
   return (
@@ -101,6 +108,7 @@ const Scenario = () => {
           </p>
           <button 
             disabled={!selectedScenario}
+            onClick={handleStartPracticing}
             className={`mt-6 px-6 py-3 rounded-full text-sm font-medium transition-colors ${
               selectedScenario 
                 ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-md" 
