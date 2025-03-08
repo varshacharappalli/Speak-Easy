@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { userStore } from '../store/userStore';
 
 const Language = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const navigate = useNavigate();
+  const {setSelectedLang}=userStore();
   
   const languages = [
     { name: "German", icon: "🇩🇪" },
@@ -13,8 +15,9 @@ const Language = () => {
   
   const handleDone = () => {
     if (selectedLanguage) {
+      setSelectedLang(selectedLanguage);
       localStorage.setItem('selectedLanguage', selectedLanguage);
-      navigate('/scenario'); // Corrected navigation
+      navigate('/scenario'); 
     }
   };
 

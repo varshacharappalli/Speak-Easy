@@ -1,25 +1,26 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { userStore } from '../store/userStore';
 
 const Scenario = () => {
   const [selectedScenario, setSelectedScenario] = useState(null);
+  const {setSelectedScen}=userStore();
   const selectedLanguage = localStorage.getItem('selectedLanguage') || '';
-  
   const scenarios = [
     {
-      id: 'shopping',
+      id: 'Shopping',
       title: 'Shopping',
       description: 'Learn how to ask about prices, sizes, and navigate a store.',
       image: '/src/images/shopping.jpg'
     },
     {
-      id: 'restaurant',
+      id: 'Restaurant',
       title: 'Restaurant',
       description: 'Reserve a table, order food, and pay the bill.',
       image: '/src/images/restaurant.jpg'
     },
     {
-      id: 'train',
+      id: 'TrainStation',
       title: 'Train Travel',
       description: 'Buy tickets, check schedules, and ask for directions.',
       image: '/src/images/trainstation.jpg',
@@ -27,6 +28,7 @@ const Scenario = () => {
   ];
   
   const handleScenarioSelect = (scenarioId) => {
+    setSelectedScen(scenarioId);
     setSelectedScenario(scenarioId);
     localStorage.setItem('selectedScenario', scenarioId);
   };
