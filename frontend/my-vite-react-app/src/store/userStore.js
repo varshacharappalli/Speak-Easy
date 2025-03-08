@@ -31,13 +31,11 @@ export const userStore = create((set, get) => ({
         try {
             console.log("Requesting AI audio response...");
             
-            // Clear previous audio URL if exists
             if (get().audio) {
                 URL.revokeObjectURL(get().audio);
-                set({ audio: null }); // Clear the audio state
+                set({ audio: null }); 
             }
             
-            // Add a timestamp to prevent caching
             const timestamp = new Date().getTime();
             
             const response = await axiosInstance.get(`/auth/airesponse?t=${timestamp}`, {
@@ -53,15 +51,13 @@ export const userStore = create((set, get) => ({
                 throw new Error("Empty audio response received");
             }
             
-            // Create a blob URL from the audio data
-            // Use the content type from the response if available
             const contentType = response.headers['content-type'] || 'audio/mpeg';
             const audioBlob = new Blob([response.data], { type: contentType });
             const audioURL = URL.createObjectURL(audioBlob);
             
             console.log("Generated audio URL:", audioURL);
             
-            // Update store with new audio URL
+            
             set({ audio: audioURL });
             
             return audioURL;

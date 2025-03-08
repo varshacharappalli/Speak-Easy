@@ -18,7 +18,6 @@ const Conversation = () => {
     selectedScen
   } = userStore();
 
-  // Fetch initial AI response when component mounts
   useEffect(() => {
     const fetchInitialResponse = async () => {
       try {
@@ -33,7 +32,6 @@ const Conversation = () => {
       }
     };
 
-    // Only fetch if we have both language and scenario
     if (selectedLang && selectedScen) {
       fetchInitialResponse();
     }
@@ -43,7 +41,6 @@ const Conversation = () => {
     console.log("Audio updated:", audio);
     if (audio) {
       console.log("Adding AI audio to conversation");
-      // Add the AI response to the conversation
       setConversation(prev => [...prev, { 
         role: 'ai',
         content: 'AI audio response',
@@ -53,7 +50,6 @@ const Conversation = () => {
       setIsResponding(false);
       setError(null);
       
-      // Test playing the audio
       const audioEl = new Audio(audio);
       audioEl.onerror = (e) => {
         console.error("Audio playback error:", e);
@@ -62,7 +58,6 @@ const Conversation = () => {
       audioEl.onloadedmetadata = () => {
         console.log("Audio duration:", audioEl.duration, "seconds");
       };
-      // audioEl.play().catch(err => console.error("Auto-play failed:", err));
     }
   }, [audio]);
   
@@ -85,11 +80,9 @@ const Conversation = () => {
       setIsResponding(true);
       setError(null);
       
-      // First upload the user audio
       console.log("Uploading user audio...");
       await setUserInput(audioFile);
       
-      // Then fetch the AI response
       console.log("Fetching AI audio response...");
       await getAIaudio();
     } catch (error) {
@@ -97,7 +90,6 @@ const Conversation = () => {
       setIsResponding(false);
       setError(`Error: ${error.message}`);
       
-      // Add error message to conversation
       setConversation(prev => [...prev, { 
         role: 'system',
         content: `Error: ${error.message}`,
@@ -105,8 +97,6 @@ const Conversation = () => {
       }]);
     }
   };
-
-  // Rest of your component remains similar
   
   const startRecording = async () => {
     try {
@@ -143,20 +133,19 @@ const Conversation = () => {
     }
   };
 
-  // Manually trigger audio fetch for debugging
-  const debugFetchAudio = async () => {
+  const fetchAIAudio = async () => {
     try {
       setIsResponding(true);
       await getAIaudio();
     } catch (err) {
-      console.error("Debug fetch error:", err);
-      setError(`Debug fetch error: ${err.message}`);
+      console.error("AI fetch error:", err);
+      setError(`AI fetch error: ${err.message}`);
     }
   };
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
-      {/* Language and scenario info */}
+      
       {(selectedLang || selectedScen) && (
         <div className="bg-white p-2 text-center border-b shadow-sm">
           {selectedLang && <span className="mr-4">Language: {selectedLang}</span>}
@@ -164,7 +153,6 @@ const Conversation = () => {
         </div>
       )}
       
-      {/* Error messages */}
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 mx-4 mt-2">
           <strong className="font-bold">Error:</strong>
@@ -172,18 +160,26 @@ const Conversation = () => {
         </div>
       )}
       
-      {/* Debug buttons */}
       <div className="bg-gray-200 p-2 flex justify-center">
         <button 
-          onClick={debugFetchAudio}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={fetchAIAudio}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center"
           disabled={isResponding}
         >
-          Debug: Fetch AI Audio
+          {isResponding ? (
+            <>
+              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Loading...
+            </>
+          ) : (
+            "Get AI Input"
+          )}
         </button>
       </div>
       
-      {/* Conversation history */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {conversation.map((message, index) => (
           <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -215,7 +211,6 @@ const Conversation = () => {
         ))}
       </div>
       
-      {/* AI response visualization - central to the screen */}
       {isResponding && (
         <div className="flex flex-col items-center mb-8">
           <div className="bg-gray-200 rounded-full w-20 h-20 flex justify-center items-center mb-4">
@@ -231,14 +226,13 @@ const Conversation = () => {
         </div>
       )}
       
-      {/* Voice recording button */}
       <div className="flex justify-center items-center p-4 border-t border-gray-300 bg-white">
         <button 
           onClick={toggleRecording}
           className={`flex justify-center items-center w-16 h-16 rounded-full focus:outline-none ${
             isRecording ? 'bg-red-500' : 'bg-gray-200 hover:bg-gray-300'
           }`}
-          disabled={isResponding} // Disable during AI response
+          disabled={isResponding}
         >
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
