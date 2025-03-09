@@ -1,7 +1,14 @@
 import axios from 'axios';
 import fs from 'fs';
 import dotenv from 'dotenv';
+import { state } from '../choose.js';
 dotenv.config({ path: "./src/.env" });
+
+const languageMap = {
+    "French": "fr",
+    "German": "de",
+    "Spanish": "es"
+};
 
 const API_KEY=process.env.ASSEMBLY_API_KEY;
 
@@ -25,12 +32,14 @@ const uploadFile=async(filePath)=>{
 }
 
 const transcribeAudio = async (audioUrl) => {
+    const selectedLanguage = state.lang || "German";
+    const languageCode = languageMap[selectedLanguage] || "de";
     console.log("Started transcription");
     const response = await axios.post(
         "https://api.assemblyai.com/v2/transcript",
         { 
             audio_url: audioUrl,
-            language_code: "de" 
+            language_code: languageCode
         },
         {
             headers: { authorization: API_KEY },
