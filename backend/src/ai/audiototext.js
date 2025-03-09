@@ -1,7 +1,7 @@
 import axios from 'axios';
 import fs from 'fs';
 import dotenv from 'dotenv';
-import { state } from '../choose.js';
+import { state } from '../scenarios/Choose.js'
 dotenv.config({ path: "./src/.env" });
 
 const languageMap = {

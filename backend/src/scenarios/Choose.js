@@ -5,7 +5,7 @@ import { getPrompt } from './restaurant.js';
 import { getPromptShopping } from './Shopping.js'; 
 import { getPromptTrain } from './TrainStation.js';
 
-const state = {
+export const state = {
     lang: "",
     scen: "",
     prompt: null,
