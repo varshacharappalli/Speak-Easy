@@ -4,19 +4,19 @@ An interactive web application designed to help users practice language skills t
 
 ## Features
 
-### 🎭 Scenario-based Learning
+### Scenario-based Learning
 Practice conversations in real-life situations:
-- 🛒 Shopping
-- 🍽️ Restaurant dialogues
-- 🚉 Train station conversations
+- Shopping
+- Restaurant dialogues
+- Train station conversations
 
-### 🎙️ Speech Recognition
+### Speech Recognition
 Speak naturally using your device’s microphone and receive real-time feedback.
 
-### 🔊 Text-to-Speech
+### Text-to-Speech
 Listen to native pronunciations for improved language learning.
 
-### 🤖 AI-Powered Conversations
+### AI-Powered Conversations
 Engage in interactive dialogues with advanced language models that mimic real-world conversations.
 
 ## Usage
@@ -27,17 +27,8 @@ Engage in interactive dialogues with advanced language models that mimic real-wo
 4. Listen to native pronunciations and improve your fluency.
 
 ## Technologies Used
-1.Backend:
--Node.js with Express
--Integration with:
-AssemblyAI for speech-to-text conversion
-Deepseek AI 
-gTTS (Google Text-to-Speech) for audio generation
+1.Backend:Node.js with Express,AssemblyAI for speech-to-text conversion,Deepseek AI ,gTTS (Google Text-to-Speech) for audio generation
 
-2.Frontend:
--React.js
--Tailwind CSS
+2.Frontend:React.js,Tailwind CSS
 
-
-🎯 Start practicing and take your language skills to the next level! 🚀
 
